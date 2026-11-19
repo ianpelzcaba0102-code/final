@@ -2955,6 +2955,8 @@ p {
 * Seguir un patrón ordenado en el desarrollo del proyecto.
 * No agregar atributos los cuales se pueden conectar mediante el Id y un join, asi evitamos redundancia.
 * Toda funcion llamada de SQL no debe estar en ningun otro lado que no sea BD.cs
+* Prioriza la utilizacion de STORED PROCEDURES en el codigo
+* Todo contenido de JavaScript debe estardentro de wwwroot/js
 
 
 [https\://drive.google.com/file/d/1FpeVxKASb0-sCEMYmvkP9qspF4ra3HSQ/view?usp=sharing](https://drive.google.com/file/d/1FpeVxKASb0-sCEMYmvkP9qspF4ra3HSQ/view?usp=sharing) 
