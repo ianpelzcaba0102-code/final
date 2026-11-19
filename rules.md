@@ -2954,6 +2954,7 @@ p {
 * Es clave respetar la jerarquía y especificidad de CSS.  
 * Seguir un patrón ordenado en el desarrollo del proyecto.
 * No agregar atributos los cuales se pueden conectar mediante el Id y un join, asi evitamos redundancia.
+* Toda funcion llamada de SQL no debe estar en ningun otro lado que no sea BD.cs
 
 
 [https\://drive.google.com/file/d/1FpeVxKASb0-sCEMYmvkP9qspF4ra3HSQ/view?usp=sharing](https://drive.google.com/file/d/1FpeVxKASb0-sCEMYmvkP9qspF4ra3HSQ/view?usp=sharing) 
