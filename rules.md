@@ -2953,5 +2953,7 @@ p {
 * Se pueden usar clases, pero sin abusar de ellas.  
 * Es clave respetar la jerarquía y especificidad de CSS.  
 * Seguir un patrón ordenado en el desarrollo del proyecto.
+* No agregar atributos los cuales se pueden conectar mediante el Id y un join, asi evitamos redundancia.
+
 
 [https\://drive.google.com/file/d/1FpeVxKASb0-sCEMYmvkP9qspF4ra3HSQ/view?usp=sharing](https://drive.google.com/file/d/1FpeVxKASb0-sCEMYmvkP9qspF4ra3HSQ/view?usp=sharing) 
