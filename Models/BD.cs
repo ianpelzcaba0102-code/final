@@ -17,4 +17,27 @@ public static class BD
             ).ToList();
         }
     }
+
+    public static bool ExisteNombreUsuario(string pNombreUsuario)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            return connection.QueryFirstOrDefault<int?>(
+                "SELECT 1 FROM dbo.Usuarios WHERE NombreUsuario = @pNombreUsuario",
+                new { pNombreUsuario }
+            ) == 1;
+        }
+    }
+
+    public static void RegistrarUsuario(Usuario usuario)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            connection.Execute(
+                "INSERT INTO dbo.Usuarios (NombreUsuario, Contrasena, Nombre, Apellido) " +
+                "VALUES (@NombreUsuario, @Contrasena, @Nombre, @Apellido)",
+                usuario
+            );
+        }
+    }
 }
