@@ -1,0 +1,66 @@
+@{
+    ViewData["Title"] = "Registro";
+}
+
+<h1>Registro</h1>
+
+<form asp-controller="Cuenta" asp-action="Registro" method="post" id="registroForm">
+    <div class="mb-3">
+        <label for="NombreUsuario" class="form-label">Nombre de usuario</label>
+        <input type="text" id="NombreUsuario" name="NombreUsuario" maxlength="50" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="Contrasena" class="form-label">Contraseña</label>
+        <input type="password" id="Contrasena" name="Contrasena" maxlength="50" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="Nombre" class="form-label">Nombre</label>
+        <input type="text" id="Nombre" name="Nombre" maxlength="50" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="Apellido" class="form-label">Apellido</label>
+        <input type="text" id="Apellido" name="Apellido" maxlength="50" class="form-control" />
+    </div>
+
+    <div id="erroresValidacion" class="text-danger" role="alert"></div>
+    <div class="text-danger" role="alert">@ViewBag.Error</div>
+
+    <button type="submit" class="btn btn-primary">Registrarse</button>
+</form>
+
+@section Scripts {
+    <script>
+        const formulario = document.getElementById("registroForm");
+
+        formulario.addEventListener("submit", function (event) {
+            const campos = [
+                { id: "NombreUsuario", etiqueta: "Nombre de usuario" },
+                { id: "Contrasena", etiqueta: "Contraseña" },
+                { id: "Nombre", etiqueta: "Nombre" },
+                { id: "Apellido", etiqueta: "Apellido" }
+            ];
+            let errores = [];
+
+            for (const campo of campos) {
+                const valor = document.getElementById(campo.id).value;
+
+                if (valor.trim() === "") {
+                    errores.push(campo.etiqueta + " es obligatorio.");
+                }
+
+                if (valor.length > 50) {
+                    errores.push(campo.etiqueta + " no puede superar los 50 caracteres.");
+                }
+            }
+
+            const contenedorErrores = document.getElementById("erroresValidacion");
+            contenedorErrores.innerHTML = errores.length > 0
+                ? "<ul><li>" + errores.join("</li><li>") + "</li></ul>"
+                : "";
+
+            if (errores.length > 0) {
+                event.preventDefault();
+            }
+        });
+    </script>
+}
