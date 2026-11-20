@@ -2956,7 +2956,11 @@ p {
 * No agregar atributos los cuales se pueden conectar mediante el Id y un join, asi evitamos redundancia.
 * Toda funcion llamada de SQL no debe estar en ningun otro lado que no sea BD.cs
 * Prioriza la utilizacion de STORED PROCEDURES en el codigo
+<<<<<<< HEAD
 * Todo contenido de JavaScript debe estar dentro de wwwroot/js
+=======
+* Todo contenido de JavaScript debe estardentro de wwwroot/js
+>>>>>>> 6caba160212aa811fc4fb963057e9bf07d4a7fa0
 
 
 [https\://drive.google.com/file/d/1FpeVxKASb0-sCEMYmvkP9qspF4ra3HSQ/view?usp=sharing](https://drive.google.com/file/d/1FpeVxKASb0-sCEMYmvkP9qspF4ra3HSQ/view?usp=sharing) 
