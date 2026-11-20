@@ -61,4 +61,38 @@ public class CuentaController : Controller
         ViewBag.Error = mensaje;
         return View("Registro", usuario);
     }
+
+    [HttpGet]
+    public IActionResult Login()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Login(string NombreUsuario, string Contrasena)
+    {
+        if (string.IsNullOrWhiteSpace(NombreUsuario) ||
+            string.IsNullOrWhiteSpace(Contrasena))
+        {
+            ViewBag.Error = "Usuario o contraseña incorrectos";
+            return View();
+        }
+
+        Usuario? usuario = BD.Login(NombreUsuario, Contrasena);
+        if (usuario is null)
+        {
+            ViewBag.Error = "Usuario o contraseña incorrectos";
+            return View();
+        }
+
+        HttpContext.Session.SetString("IdUsuario", usuario.Id.ToString());
+        return RedirectToAction("Catalogo", "Taller");
+    }
+
+    public IActionResult CerrarSesion()
+    {
+        HttpContext.Session.Clear();
+        return RedirectToAction("Login");
+    }
 }

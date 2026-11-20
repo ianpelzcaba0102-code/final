@@ -40,4 +40,17 @@ public static class BD
             );
         }
     }
+
+    public static Usuario? Login(string pNombreUsuario, string pContrasena)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            return connection.QueryFirstOrDefault<Usuario>(
+                "SELECT Id, NombreUsuario, Contrasena, Nombre, Apellido " +
+                "FROM dbo.Usuarios " +
+                "WHERE NombreUsuario = @pNombreUsuario AND Contrasena = @pContrasena",
+                new { pNombreUsuario, pContrasena }
+            );
+        }
+    }
 }
