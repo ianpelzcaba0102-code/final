@@ -106,25 +106,29 @@ form {
 
 .taller-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.25rem;
     margin: 1.5rem 0;
 }
 
 .taller-card {
-    overflow: hidden;
+    display: block;
     border: 1px solid #d5dce5;
     border-radius: 6px;
     background-color: #fff;
-    box-shadow: 0 2px 6px rgb(36 50 71 / 10%);
+    color: #243247;
+    text-decoration: none;
+}
+
+.taller-card:hover {
+    border-color: #23466b;
+    background-color: #eaf1f8;
 }
 
 .taller-card img {
     display: block;
     width: 100%;
     height: 160px;
-    object-fit: cover;
-    background-color: #e5eaf0;
 }
 
 .taller-card-content {

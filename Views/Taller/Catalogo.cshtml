@@ -15,13 +15,13 @@ else
     <div class="taller-grid">
         @foreach (dynamic taller in Model)
         {
-            <article class="taller-card">
+            <a class="taller-card" href="@Url.Action("Detalle", "Taller", new { id = taller.Id })">
                 <img src="@Url.Content("~/imagenes/" + taller.Imagen)" alt="@taller.Nombre" />
                 <div class="taller-card-content">
                     <h2>@taller.Nombre</h2>
                     <p class="taller-category">@taller.NombreCategoria</p>
                 </div>
-            </article>
+            </a>
         }
     </div>
 }
