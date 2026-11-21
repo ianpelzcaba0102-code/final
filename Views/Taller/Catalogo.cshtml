@@ -1,5 +1,29 @@
+@model IEnumerable<dynamic>
+
 @{
     ViewData["Title"] = "Catálogo";
 }
 
 <h1>Catálogo</h1>
+
+@if (!Model.Any())
+{
+    <p>No hay talleres disponibles en este momento.</p>
+}
+else
+{
+    <div class="taller-grid">
+        @foreach (dynamic taller in Model)
+        {
+            <article class="taller-card">
+                <img src="@Url.Content("~/imagenes/" + taller.Imagen)" alt="@taller.Nombre" />
+                <div class="taller-card-content">
+                    <h2>@taller.Nombre</h2>
+                    <p class="taller-category">@taller.NombreCategoria</p>
+                </div>
+            </article>
+        }
+    </div>
+}
+
+<button type="button" class="btn btn-primary">Ver más</button>

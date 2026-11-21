@@ -8,5 +8,4 @@ public class Inscripcion
     public DateTime FechaInscripcion { get; set; }
     public bool Cancelado { get; set; }
     public DateTime? FechaCancelacion { get; set; }
-    public string NombreTaller { get; set; } = string.Empty;
 }

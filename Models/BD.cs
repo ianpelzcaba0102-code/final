@@ -18,6 +18,41 @@ public static class BD
         }
     }
 
+    public static List<dynamic> ObtenerTalleres(int cantidadYaMostrada)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            return connection.Query(
+                "SELECT t.Id, t.Nombre, t.Imagen, " +
+                "c.Nombre AS NombreCategoria " +
+                "FROM dbo.Talleres AS t " +
+                "INNER JOIN dbo.Categorias AS c ON t.IdCategoria = c.Id " +
+                "WHERE t.Activo = 1 " +
+                "ORDER BY t.Id " +
+                "OFFSET @pOffset ROWS FETCH NEXT 8 ROWS ONLY",
+                new { pOffset = cantidadYaMostrada }
+            ).ToList();
+        }
+    }
+
+    public static List<dynamic> ObtenerInscripciones(int idUsuario)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            return connection.Query(
+                "SELECT i.Id, i.IdEncuentro, e.IdTaller, i.IdUsuario, " +
+                "i.FechaInscripcion, i.Cancelado, i.FechaCancelacion, " +
+                "t.Nombre AS NombreTaller " +
+                "FROM dbo.Inscripciones AS i " +
+                "INNER JOIN dbo.Encuentros AS e ON i.IdEncuentro = e.Id " +
+                "INNER JOIN dbo.Talleres AS t ON e.IdTaller = t.Id " +
+                "WHERE i.IdUsuario = @pIdUsuario " +
+                "ORDER BY i.FechaInscripcion DESC",
+                new { pIdUsuario = idUsuario }
+            ).ToList();
+        }
+    }
+
     public static bool ExisteNombreUsuario(string pNombreUsuario)
     {
         using (SqlConnection connection = new SqlConnection(ConnectionString))

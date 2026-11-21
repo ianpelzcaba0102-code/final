@@ -2953,7 +2953,8 @@ p {
 * Se pueden usar clases, pero sin abusar de ellas.  
 * Es clave respetar la jerarquía y especificidad de CSS.  
 * Seguir un patrón ordenado en el desarrollo del proyecto.
-* No agregar atributos los cuales se pueden conectar mediante el Id y un join, asi evitamos redundancia.
+* No crear atributos de otras tablas los cuales ya estean creados y se pueden conectar mediante el Id y un join, .
+* No crear atributos dentro de un modelo los cuales ya son existentes en otro modelo. Ejemplo si es necesario el nombre de las categorias (atribur¿to ya creado en la tabla Categorias), hacer una conexion entre esa tabla y su id con la tabla que requiere ese atributo.
 * Toda funcion llamada de SQL no debe estar en ningun otro lado que no sea BD.cs
 * Prioriza la utilizacion de STORED PROCEDURES en el codigo
 <<<<<<< HEAD

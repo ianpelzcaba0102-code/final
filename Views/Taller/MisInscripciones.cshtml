@@ -1,5 +1,27 @@
+@model IEnumerable<dynamic>
+
 @{
     ViewData["Title"] = "Mis inscripciones";
 }
 
 <h1>Mis inscripciones</h1>
+
+@if (!Model.Any())
+{
+    <p>No tenés inscripciones.</p>
+}
+else
+{
+    <ul>
+        @foreach (dynamic inscripcion in Model)
+        {
+            <li>
+                @inscripcion.NombreTaller
+                @if (inscripcion.Cancelado)
+                {
+                    <span>(Cancelada)</span>
+                }
+            </li>
+        }
+    </ul>
+}

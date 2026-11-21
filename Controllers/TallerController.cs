@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using TallerescExtracurriculares.Models;
 
 namespace TallerescExtracurriculares.Controllers;
 
@@ -18,7 +19,8 @@ public class TallerController : Controller
 
     public IActionResult Catalogo()
     {
-        return View();
+        List<dynamic> talleres = BD.ObtenerTalleres(0);
+        return View(talleres);
     }
 
     public IActionResult Detalle()
@@ -28,6 +30,12 @@ public class TallerController : Controller
 
     public IActionResult MisInscripciones()
     {
-        return View();
+        if (!int.TryParse(HttpContext.Session.GetString("IdUsuario"), out int idUsuario))
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login", "Cuenta");
+        }
+
+        return View(BD.ObtenerInscripciones(idUsuario));
     }
 }
