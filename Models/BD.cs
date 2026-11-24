@@ -76,6 +76,22 @@ public static class BD
         }
     }
 
+    public static int? ObtenerLugaresDisponibles(int idEncuentro)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            return connection.QueryFirstOrDefault<int?>(
+                "SELECT e.Cupo - COUNT(i.Id) " +
+                "FROM dbo.Encuentros AS e " +
+                "LEFT JOIN dbo.Inscripciones AS i " +
+                "ON i.IdEncuentro = e.Id AND i.Cancelado = 0 " +
+                "WHERE e.Id = @pIdEncuentro " +
+                "GROUP BY e.Cupo",
+                new { pIdEncuentro = idEncuentro }
+            );
+        }
+    }
+
     public static List<dynamic> ObtenerInscripciones(int idUsuario)
     {
         using (SqlConnection connection = new SqlConnection(ConnectionString))

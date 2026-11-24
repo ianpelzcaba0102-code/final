@@ -28,10 +28,48 @@ else
         @foreach (dynamic encuentro in encuentros)
         {
             <li>
-                @(((DateTime)encuentro.FechaHora).ToString("dd/MM/yyyy"))
-                a las @(((DateTime)encuentro.FechaHora).ToString("HH:mm")) —
-                @encuentro.DuracionMinutos minutos, cupo @encuentro.Cupo
+                <label>
+                    <input type="radio"
+                           name="IdEncuentro"
+                           value="@encuentro.Id"
+                           class="encuentro-radio" />
+                    @(((DateTime)encuentro.FechaHora).ToString("dd/MM/yyyy"))
+                    a las @(((DateTime)encuentro.FechaHora).ToString("HH:mm")) —
+                    @encuentro.DuracionMinutos minutos, cupo @encuentro.Cupo
+                </label>
             </li>
         }
     </ul>
+}
+
+<div id="lugaresDisponibles" aria-live="polite"></div>
+
+@section Scripts {
+    <script>
+        const radiosEncuentro = document.querySelectorAll(".encuentro-radio");
+        const resultadoLugares = document.getElementById("lugaresDisponibles");
+        const urlLugaresDisponibles = "@Url.Action("LugaresDisponibles", "Taller")";
+
+        for (const radio of radiosEncuentro) {
+            radio.addEventListener("change", async function () {
+                resultadoLugares.innerHTML = "Consultando lugares disponibles...";
+
+                try {
+                    const respuesta = await fetch(
+                        `${urlLugaresDisponibles}?idEncuentro=${encodeURIComponent(radio.value)}`
+                    );
+
+                    if (!respuesta.ok) {
+                        throw new Error("No se pudieron consultar los lugares disponibles.");
+                    }
+
+                    const datos = await respuesta.json();
+                    resultadoLugares.innerHTML =
+                        `Lugares disponibles: <strong>${datos.lugaresDisponibles}</strong>`;
+                } catch (error) {
+                    resultadoLugares.innerHTML = error.message;
+                }
+            });
+        }
+    </script>
 }

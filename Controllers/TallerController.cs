@@ -58,6 +58,18 @@ public class TallerController : Controller
         return View();
     }
 
+    [HttpGet]
+    public IActionResult LugaresDisponibles(int idEncuentro)
+    {
+        int? lugaresDisponibles = BD.ObtenerLugaresDisponibles(idEncuentro);
+        if (lugaresDisponibles is null)
+        {
+            return NotFound();
+        }
+
+        return Json(new { lugaresDisponibles });
+    }
+
     public IActionResult MisInscripciones()
     {
         if (!int.TryParse(HttpContext.Session.GetString("IdUsuario"), out int idUsuario))
