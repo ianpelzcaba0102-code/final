@@ -98,10 +98,29 @@ public static class BD
         using (SqlConnection connection = new SqlConnection(ConnectionString))
         {
             return connection.QueryFirstOrDefault<dynamic>(
-                "SELECT Id, IdTaller, Cupo " +
+                "SELECT Id, IdTaller, Cupo, FechaHora " +
                 "FROM dbo.Encuentros " +
                 "WHERE Id = @pIdEncuentro",
                 new { pIdEncuentro = idEncuentro }
+            );
+        }
+    }
+
+    public static int ContarInscripcionesDeLaSemana(
+        int idUsuario,
+        DateTime lunes,
+        DateTime domingo)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            return connection.QuerySingle<int>(
+                "SELECT COUNT(*) " +
+                "FROM dbo.Inscripciones AS i " +
+                "INNER JOIN dbo.Encuentros AS e ON i.IdEncuentro = e.Id " +
+                "WHERE i.IdUsuario = @pIdUsuario " +
+                "AND i.Cancelado = 0 " +
+                "AND e.FechaHora BETWEEN @pLunes AND @pDomingo",
+                new { pIdUsuario = idUsuario, pLunes = lunes, pDomingo = domingo }
             );
         }
     }

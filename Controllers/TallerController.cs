@@ -76,9 +76,22 @@ public class TallerController : Controller
             return NotFound();
         }
 
+        DateTime fechaHoraEncuentro = (DateTime)encuentro.FechaHora;
+        int diasDesdeLunes = ((int)fechaHoraEncuentro.DayOfWeek + 6) % 7;
+        DateTime lunes = fechaHoraEncuentro.Date.AddDays(-diasDesdeLunes);
+        DateTime domingo = lunes.AddDays(6).AddHours(23).AddMinutes(59).AddSeconds(59);
+
         int inscripcionesActivas = BD.ContarInscripcionesActivas(idEncuentro);
-        if (inscripcionesActivas >= (int)encuentro.Cupo ||
-            !BD.RegistrarInscripcion(idEncuentro, idUsuario))
+        if (inscripcionesActivas >= (int)encuentro.Cupo)
+        {
+            TempData["ErrorInscripcion"] = "El encuentro ya no tiene lugares disponibles.";
+        }
+        else if (BD.ContarInscripcionesDeLaSemana(idUsuario, lunes, domingo) >= 2)
+        {
+            TempData["ErrorInscripcion"] =
+                "Ya tenés 2 encuentros activos inscriptos durante esa semana. El máximo permitido es 2.";
+        }
+        else if (!BD.RegistrarInscripcion(idEncuentro, idUsuario))
         {
             TempData["ErrorInscripcion"] = "El encuentro ya no tiene lugares disponibles.";
         }
