@@ -200,6 +200,33 @@ public static class BD
         }
     }
 
+    public static dynamic? ObtenerInscripcionParaCancelar(int idInscripcion, int idUsuario)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            return connection.QueryFirstOrDefault<dynamic>(
+                "SELECT i.Id, i.Cancelado, e.FechaHora " +
+                "FROM dbo.Inscripciones AS i " +
+                "INNER JOIN dbo.Encuentros AS e ON i.IdEncuentro = e.Id " +
+                "WHERE i.Id = @pIdInscripcion AND i.IdUsuario = @pIdUsuario",
+                new { pIdInscripcion = idInscripcion, pIdUsuario = idUsuario }
+            );
+        }
+    }
+
+    public static bool CancelarInscripcion(int idInscripcion)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            return connection.Execute(
+                "UPDATE dbo.Inscripciones " +
+                "SET Cancelado = 1, FechaCancelacion = GETDATE() " +
+                "WHERE Id = @pId AND Cancelado = 0",
+                new { pId = idInscripcion }
+            ) == 1;
+        }
+    }
+
     public static bool ExisteNombreUsuario(string pNombreUsuario)
     {
         using (SqlConnection connection = new SqlConnection(ConnectionString))

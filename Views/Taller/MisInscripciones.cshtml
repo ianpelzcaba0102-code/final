@@ -6,6 +6,12 @@
 
 <h1>Mis inscripciones</h1>
 
+<div id="datosCancelacion"
+     data-url-cancelar="@Url.Action("CancelarInscripcion", "Taller")"
+     hidden>
+    @Html.AntiForgeryToken()
+</div>
+
 <h2>Próximas</h2>
 <table>
     <thead>
@@ -32,15 +38,22 @@
                     <td>@(((DateTime)inscripcion.FechaHora).ToString("HH:mm"))</td>
                     <td>@inscripcion.DuracionMinutos minutos</td>
                     <td>
-                        <button type="button" data-id-inscripcion="@inscripcion.IdInscripcion">
+                        <button type="button"
+                                class="btn-cancelar"
+                                data-id-inscripcion="@inscripcion.IdInscripcion">
                             Cancelar
                         </button>
+                        <span class="mensaje-cancelacion" aria-live="polite"></span>
                     </td>
                 </tr>
             }
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script src="~/js/mis-inscripciones.js"></script>
+}
 
 <h2>Pasadas</h2>
 <table>

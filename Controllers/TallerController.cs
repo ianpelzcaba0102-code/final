@@ -10,8 +10,20 @@ public class TallerController : Controller
     {
         if (HttpContext.Session.GetString("IdUsuario") is null)
         {
-            context.Result = RedirectToAction("Login", "Cuenta");
-            return;
+            bool esCancelacion = context.ActionDescriptor.RouteValues.TryGetValue(
+                "action",
+                out string? nombreAccion
+            ) && string.Equals(
+                nombreAccion,
+                nameof(CancelarInscripcion),
+                StringComparison.OrdinalIgnoreCase
+            );
+
+            if (!esCancelacion)
+            {
+                context.Result = RedirectToAction("Login", "Cuenta");
+                return;
+            }
         }
 
         base.OnActionExecuting(context);
@@ -113,6 +125,37 @@ public class TallerController : Controller
         }
 
         return Json(new { lugaresDisponibles });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult CancelarInscripcion(int idInscripcion)
+    {
+        if (!int.TryParse(HttpContext.Session.GetString("IdUsuario"), out int idUsuario))
+        {
+            Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Json(new { ok = false, mensaje = "Tu sesión expiró. Iniciá sesión nuevamente." });
+        }
+
+        dynamic? inscripcion = BD.ObtenerInscripcionParaCancelar(idInscripcion, idUsuario);
+        if (inscripcion is null)
+        {
+            return Json(new { ok = false, mensaje = "La inscripción no existe o no te pertenece." });
+        }
+        if ((bool)inscripcion.Cancelado)
+        {
+            return Json(new { ok = false, mensaje = "La inscripción ya fue cancelada." });
+        }
+        if ((DateTime)inscripcion.FechaHora <= DateTime.Now)
+        {
+            return Json(new { ok = false, mensaje = "No se puede cancelar: el encuentro ya comenzó o pasó." });
+        }
+        if (!BD.CancelarInscripcion(idInscripcion))
+        {
+            return Json(new { ok = false, mensaje = "La inscripción ya fue cancelada." });
+        }
+
+        return Json(new { ok = true, mensaje = "Inscripción cancelada." });
     }
 
     public IActionResult MisInscripciones()
