@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using TallerescExtracurriculares.Models;
 
 namespace TallerescExtracurriculares.Controllers;
@@ -13,8 +14,23 @@ public class CuentaController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Registro(Usuario usuario)
+    public IActionResult Registro(Usuario usuario, string repetirContrasena)
     {
+        usuario.Email = usuario.Email?.Trim() ?? string.Empty;
+        usuario.NombreUsuario = usuario.NombreUsuario?.Trim() ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(usuario.Email))
+        {
+            return MostrarErrorRegistro(usuario, "El correo electrónico es obligatorio.");
+        }
+        if (usuario.Email.Length > 254)
+        {
+            return MostrarErrorRegistro(usuario, "El correo electrónico no puede superar los 254 caracteres.");
+        }
+        if (!new EmailAddressAttribute().IsValid(usuario.Email))
+        {
+            return MostrarErrorRegistro(usuario, "Ingresá un correo electrónico válido.");
+        }
         if (string.IsNullOrWhiteSpace(usuario.NombreUsuario))
         {
             return MostrarErrorRegistro(usuario, "El nombre de usuario es obligatorio.");
@@ -30,6 +46,10 @@ public class CuentaController : Controller
         if (usuario.Contrasena.Length > 50)
         {
             return MostrarErrorRegistro(usuario, "La contraseña no puede superar los 50 caracteres.");
+        }
+        if (string.IsNullOrWhiteSpace(repetirContrasena) || usuario.Contrasena != repetirContrasena)
+        {
+            return MostrarErrorRegistro(usuario, "Las contraseñas no coinciden.");
         }
         if (string.IsNullOrWhiteSpace(usuario.Nombre))
         {
@@ -47,12 +67,13 @@ public class CuentaController : Controller
         {
             return MostrarErrorRegistro(usuario, "El apellido no puede superar los 50 caracteres.");
         }
-        if (BD.ExisteNombreUsuario(usuario.NombreUsuario))
+        if (BD.ExisteNombreUsuarioOEmail(usuario.NombreUsuario, usuario.Email))
         {
-            return MostrarErrorRegistro(usuario, "Ese nombre de usuario ya está registrado.");
+            return MostrarErrorRegistro(usuario, "El nombre de usuario o el mail ya está registrado.");
         }
 
         BD.RegistrarUsuario(usuario);
+        TempData["MensajeLogin"] = "La cuenta se creó correctamente. Ya podés iniciar sesión.";
         return RedirectToAction("Login");
     }
 
@@ -66,6 +87,7 @@ public class CuentaController : Controller
     public IActionResult Login()
     {
         ViewBag.Error = TempData["ErrorSesion"];
+        ViewBag.Mensaje = TempData["MensajeLogin"];
         return View();
     }
 

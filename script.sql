@@ -16,6 +16,7 @@ GO
 
 CREATE TABLE dbo.Usuarios (
     Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    Email VARCHAR(254) NOT NULL UNIQUE,
     NombreUsuario VARCHAR(50) NOT NULL UNIQUE,
     Contrasena VARCHAR(50) NOT NULL,
     Nombre VARCHAR(50) NOT NULL,
@@ -99,11 +100,11 @@ VALUES
     ('Portugués práctico', 'Aprendé expresiones y vocabulario para comunicarte en portugués en situaciones cotidianas. El taller combina escucha y conversación guiada.', 'portugues.jpg', 5, 1);
 GO
 
-INSERT INTO dbo.Usuarios (NombreUsuario, Contrasena, Nombre, Apellido)
+INSERT INTO dbo.Usuarios (Email, NombreUsuario, Contrasena, Nombre, Apellido)
 VALUES
-    ('usuario_prueba1', 'Prueba123', 'Ana', 'García'),
-    ('usuario_prueba2', 'Prueba123', 'Bruno', 'López'),
-    ('usuario_prueba3', 'Prueba123', 'Carla', 'Martínez');
+    ('ana.prueba@example.com', 'usuario_prueba1', 'Prueba123', 'Ana', 'García'),
+    ('bruno.prueba@example.com', 'usuario_prueba2', 'Prueba123', 'Bruno', 'López'),
+    ('carla.prueba@example.com', 'usuario_prueba3', 'Prueba123', 'Carla', 'Martínez');
 GO
 
 INSERT INTO dbo.Encuentros (IdTaller, FechaHora, DuracionMinutos, Cupo)

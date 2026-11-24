@@ -2,10 +2,12 @@ const formulario = document.getElementById("registroForm");
 
 formulario.addEventListener("submit", function (event) {
     const campos = [
-        { id: "NombreUsuario", etiqueta: "Nombre de usuario" },
-        { id: "Contrasena", etiqueta: "Contraseña" },
-        { id: "Nombre", etiqueta: "Nombre" },
-        { id: "Apellido", etiqueta: "Apellido" }
+        { id: "Email", etiqueta: "Correo electrónico", maximo: 254 },
+        { id: "NombreUsuario", etiqueta: "Nombre de usuario", maximo: 50 },
+        { id: "Contrasena", etiqueta: "Contraseña", maximo: 50 },
+        { id: "RepetirContrasena", etiqueta: "Repetir contraseña", maximo: 50 },
+        { id: "Nombre", etiqueta: "Nombre", maximo: 50 },
+        { id: "Apellido", etiqueta: "Apellido", maximo: 50 }
     ];
     let errores = [];
 
@@ -16,9 +18,15 @@ formulario.addEventListener("submit", function (event) {
             errores.push(campo.etiqueta + " es obligatorio.");
         }
 
-        if (valor.length > 50) {
-            errores.push(campo.etiqueta + " no puede superar los 50 caracteres.");
+        if (valor.length > campo.maximo) {
+            errores.push(campo.etiqueta + " no puede superar los " + campo.maximo + " caracteres.");
         }
+    }
+
+    const contrasena = document.getElementById("Contrasena").value;
+    const repetirContrasena = document.getElementById("RepetirContrasena").value;
+    if (contrasena !== repetirContrasena) {
+        errores.push("Las contraseñas no coinciden.");
     }
 
     const contenedorErrores = document.getElementById("erroresValidacion");

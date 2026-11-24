@@ -6,12 +6,20 @@
 
 <form asp-controller="Cuenta" asp-action="Registro" method="post" id="registroForm">
     <div class="mb-3">
+        <label for="Email" class="form-label">Correo electrónico</label>
+        <input type="email" id="Email" name="Email" maxlength="254" class="form-control" />
+    </div>
+    <div class="mb-3">
         <label for="NombreUsuario" class="form-label">Nombre de usuario</label>
         <input type="text" id="NombreUsuario" name="NombreUsuario" maxlength="50" class="form-control" />
     </div>
     <div class="mb-3">
         <label for="Contrasena" class="form-label">Contraseña</label>
         <input type="password" id="Contrasena" name="Contrasena" maxlength="50" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="RepetirContrasena" class="form-label">Repetir contraseña</label>
+        <input type="password" id="RepetirContrasena" name="RepetirContrasena" maxlength="50" class="form-control" />
     </div>
     <div class="mb-3">
         <label for="Nombre" class="form-label">Nombre</label>

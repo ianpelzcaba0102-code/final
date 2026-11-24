@@ -243,14 +243,15 @@ public static class BD
         }
     }
 
-    public static bool ExisteNombreUsuario(string pNombreUsuario)
+    public static bool ExisteNombreUsuarioOEmail(string pNombreUsuario, string pEmail)
     {
         using (SqlConnection connection = new SqlConnection(ConnectionString))
         {
-            return connection.QueryFirstOrDefault<int?>(
-                "SELECT 1 FROM dbo.Usuarios WHERE NombreUsuario = @pNombreUsuario",
-                new { pNombreUsuario }
-            ) == 1;
+            return connection.QuerySingle<int>(
+                "SELECT COUNT(*) FROM dbo.Usuarios " +
+                "WHERE NombreUsuario = @pNombreUsuario OR Email = @pEmail",
+                new { pNombreUsuario, pEmail }
+            ) > 0;
         }
     }
 
@@ -259,8 +260,8 @@ public static class BD
         using (SqlConnection connection = new SqlConnection(ConnectionString))
         {
             connection.Execute(
-                "INSERT INTO dbo.Usuarios (NombreUsuario, Contrasena, Nombre, Apellido) " +
-                "VALUES (@NombreUsuario, @Contrasena, @Nombre, @Apellido)",
+                "INSERT INTO dbo.Usuarios (Email, NombreUsuario, Contrasena, Nombre, Apellido) " +
+                "VALUES (@Email, @NombreUsuario, @Contrasena, @Nombre, @Apellido)",
                 usuario
             );
         }
@@ -271,7 +272,7 @@ public static class BD
         using (SqlConnection connection = new SqlConnection(ConnectionString))
         {
             return connection.QueryFirstOrDefault<Usuario>(
-                "SELECT Id, NombreUsuario, Contrasena, Nombre, Apellido " +
+                "SELECT Id, Email, NombreUsuario, Contrasena, Nombre, Apellido " +
                 "FROM dbo.Usuarios " +
                 "WHERE NombreUsuario = @pNombreUsuario AND Contrasena = @pContrasena",
                 new { pNombreUsuario, pContrasena }
