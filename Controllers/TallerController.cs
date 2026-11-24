@@ -55,7 +55,39 @@ public class TallerController : Controller
 
         ViewBag.Taller = taller;
         ViewBag.Encuentros = BD.ObtenerEncuentrosFuturos((int)taller.Id);
+        ViewBag.ErrorInscripcion = TempData["ErrorInscripcion"];
+        ViewBag.MensajeInscripcion = TempData["MensajeInscripcion"];
         return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Inscribirse(int idEncuentro)
+    {
+        if (!int.TryParse(HttpContext.Session.GetString("IdUsuario"), out int idUsuario))
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login", "Cuenta");
+        }
+
+        dynamic? encuentro = BD.ObtenerDatosEncuentro(idEncuentro);
+        if (encuentro is null)
+        {
+            return NotFound();
+        }
+
+        int inscripcionesActivas = BD.ContarInscripcionesActivas(idEncuentro);
+        if (inscripcionesActivas >= (int)encuentro.Cupo ||
+            !BD.RegistrarInscripcion(idEncuentro, idUsuario))
+        {
+            TempData["ErrorInscripcion"] = "El encuentro ya no tiene lugares disponibles.";
+        }
+        else
+        {
+            TempData["MensajeInscripcion"] = "Te inscribiste correctamente.";
+        }
+
+        return RedirectToAction(nameof(Detalle), new { id = (int)encuentro.IdTaller });
     }
 
     [HttpGet]

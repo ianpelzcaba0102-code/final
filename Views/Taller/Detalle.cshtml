@@ -18,12 +18,22 @@
 
 <h2>Próximos encuentros</h2>
 
+@if (ViewBag.ErrorInscripcion is not null)
+{
+    <p class="text-danger" role="alert">@ViewBag.ErrorInscripcion</p>
+}
+@if (ViewBag.MensajeInscripcion is not null)
+{
+    <p role="status">@ViewBag.MensajeInscripcion</p>
+}
+
 @if (!encuentros.Any())
 {
     <p>No hay encuentros futuros para este taller.</p>
 }
 else
 {
+    <form asp-controller="Taller" asp-action="Inscribirse" method="post">
     <ul>
         @foreach (dynamic encuentro in encuentros)
         {
@@ -32,7 +42,8 @@ else
                     <input type="radio"
                            name="IdEncuentro"
                            value="@encuentro.Id"
-                           class="encuentro-radio" />
+                           class="encuentro-radio"
+                           required />
                     @(((DateTime)encuentro.FechaHora).ToString("dd/MM/yyyy"))
                     a las @(((DateTime)encuentro.FechaHora).ToString("HH:mm")) —
                     @encuentro.DuracionMinutos minutos, cupo @encuentro.Cupo
@@ -40,6 +51,8 @@ else
             </li>
         }
     </ul>
+        <button type="submit" class="btn btn-primary">Inscribirme</button>
+    </form>
 }
 
 <div id="lugaresDisponibles" aria-live="polite"></div>

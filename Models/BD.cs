@@ -1,5 +1,6 @@
 using Dapper;
 using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace TallerescExtracurriculares.Models;
 
@@ -89,6 +90,77 @@ public static class BD
                 "GROUP BY e.Cupo",
                 new { pIdEncuentro = idEncuentro }
             );
+        }
+    }
+
+    public static dynamic? ObtenerDatosEncuentro(int idEncuentro)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            return connection.QueryFirstOrDefault<dynamic>(
+                "SELECT Id, IdTaller, Cupo " +
+                "FROM dbo.Encuentros " +
+                "WHERE Id = @pIdEncuentro",
+                new { pIdEncuentro = idEncuentro }
+            );
+        }
+    }
+
+    public static int ContarInscripcionesActivas(int idEncuentro)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            return ContarInscripcionesActivas(connection, null, idEncuentro);
+        }
+    }
+
+    private static int ContarInscripcionesActivas(
+        SqlConnection connection,
+        SqlTransaction? transaction,
+        int idEncuentro)
+    {
+        return connection.QuerySingle<int>(
+            "SELECT COUNT(*) " +
+            "FROM dbo.Inscripciones " +
+            "WHERE IdEncuentro = @pIdEncuentro AND Cancelado = 0",
+            new { pIdEncuentro = idEncuentro },
+            transaction
+        );
+    }
+
+    public static bool RegistrarInscripcion(int idEncuentro, int idUsuario)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            connection.Open();
+            using (SqlTransaction transaction = connection.BeginTransaction(IsolationLevel.Serializable))
+            {
+                dynamic? encuentro = connection.QueryFirstOrDefault<dynamic>(
+                    "SELECT Id, Cupo " +
+                    "FROM dbo.Encuentros WITH (UPDLOCK, HOLDLOCK) " +
+                    "WHERE Id = @pIdEncuentro",
+                    new { pIdEncuentro = idEncuentro },
+                    transaction
+                );
+
+                if (encuentro is null ||
+                    ContarInscripcionesActivas(connection, transaction, idEncuentro) >= (int)encuentro.Cupo)
+                {
+                    transaction.Commit();
+                    return false;
+                }
+
+                connection.Execute(
+                    "INSERT INTO dbo.Inscripciones " +
+                    "(IdEncuentro, IdUsuario, FechaInscripcion, Cancelado, FechaCancelacion) " +
+                    "VALUES (@pIdEncuentro, @pIdUsuario, GETDATE(), 0, NULL)",
+                    new { pIdEncuentro = idEncuentro, pIdUsuario = idUsuario },
+                    transaction
+                );
+
+                transaction.Commit();
+                return true;
+            }
         }
     }
 
