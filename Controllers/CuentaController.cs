@@ -65,6 +65,7 @@ public class CuentaController : Controller
     [HttpGet]
     public IActionResult Login()
     {
+        ViewBag.Error = TempData["ErrorSesion"];
         return View();
     }
 

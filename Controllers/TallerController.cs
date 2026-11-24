@@ -10,17 +10,33 @@ public class TallerController : Controller
     {
         if (HttpContext.Session.GetString("IdUsuario") is null)
         {
-            bool esCancelacion = context.ActionDescriptor.RouteValues.TryGetValue(
+            context.ActionDescriptor.RouteValues.TryGetValue(
                 "action",
                 out string? nombreAccion
-            ) && string.Equals(
+            );
+
+            bool esCancelacion = string.Equals(
                 nombreAccion,
                 nameof(CancelarInscripcion),
                 StringComparison.OrdinalIgnoreCase
             );
+            bool esFetch = string.Equals(nombreAccion, nameof(VerMas), StringComparison.OrdinalIgnoreCase) ||
+                           string.Equals(nombreAccion, nameof(LugaresDisponibles), StringComparison.OrdinalIgnoreCase);
+
+            if (esFetch)
+            {
+                Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.Result = Json(new
+                {
+                    ok = false,
+                    mensaje = "Tu sesión expiró. Iniciá sesión nuevamente."
+                });
+                return;
+            }
 
             if (!esCancelacion)
             {
+                TempData["ErrorSesion"] = "Tu sesión expiró. Iniciá sesión nuevamente.";
                 context.Result = RedirectToAction("Login", "Cuenta");
                 return;
             }
@@ -33,6 +49,7 @@ public class TallerController : Controller
     {
         List<dynamic> talleres = BD.ObtenerTalleres(0);
         ViewBag.HayMas = BD.HayMasTalleres(talleres.Count);
+        ViewBag.ErrorCatalogo = TempData["ErrorCatalogo"];
         return View(talleres);
     }
 
@@ -62,6 +79,12 @@ public class TallerController : Controller
         dynamic? taller = BD.ObtenerTaller(id);
         if (taller is null)
         {
+            TempData["ErrorCatalogo"] = "El taller solicitado no existe.";
+            return RedirectToAction(nameof(Catalogo));
+        }
+        if (!(bool)taller.Activo)
+        {
+            TempData["ErrorCatalogo"] = "Este taller está inactivo y no se puede ver ni reservar.";
             return RedirectToAction(nameof(Catalogo));
         }
 
@@ -79,22 +102,38 @@ public class TallerController : Controller
         if (!int.TryParse(HttpContext.Session.GetString("IdUsuario"), out int idUsuario))
         {
             HttpContext.Session.Clear();
+            TempData["ErrorSesion"] = "Tu sesión expiró. Iniciá sesión nuevamente.";
             return RedirectToAction("Login", "Cuenta");
         }
 
         dynamic? encuentro = BD.ObtenerDatosEncuentro(idEncuentro);
         if (encuentro is null)
         {
-            return NotFound();
+            TempData["ErrorCatalogo"] = "El encuentro seleccionado no existe.";
+            return RedirectToAction(nameof(Catalogo));
+        }
+        if (!(bool)encuentro.Activo)
+        {
+            TempData["ErrorCatalogo"] = "El taller está inactivo y no se puede reservar.";
+            return RedirectToAction(nameof(Catalogo));
         }
 
         DateTime fechaHoraEncuentro = (DateTime)encuentro.FechaHora;
+        if (fechaHoraEncuentro <= DateTime.Now)
+        {
+            TempData["ErrorInscripcion"] = "No podés inscribirte: el encuentro ya pasó.";
+            return RedirectToAction(nameof(Detalle), new { id = (int)encuentro.IdTaller });
+        }
+
         int diasDesdeLunes = ((int)fechaHoraEncuentro.DayOfWeek + 6) % 7;
         DateTime lunes = fechaHoraEncuentro.Date.AddDays(-diasDesdeLunes);
         DateTime domingo = lunes.AddDays(6).AddHours(23).AddMinutes(59).AddSeconds(59);
 
-        int inscripcionesActivas = BD.ContarInscripcionesActivas(idEncuentro);
-        if (inscripcionesActivas >= (int)encuentro.Cupo)
+        if (BD.ExisteInscripcionActiva(idUsuario, idEncuentro))
+        {
+            TempData["ErrorInscripcion"] = "Ya estás inscripto en este encuentro.";
+        }
+        else if (BD.ContarInscripcionesActivas(idEncuentro) >= (int)encuentro.Cupo)
         {
             TempData["ErrorInscripcion"] = "El encuentro ya no tiene lugares disponibles.";
         }
@@ -121,7 +160,8 @@ public class TallerController : Controller
         int? lugaresDisponibles = BD.ObtenerLugaresDisponibles(idEncuentro);
         if (lugaresDisponibles is null)
         {
-            return NotFound();
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return Json(new { ok = false, mensaje = "El encuentro seleccionado no existe." });
         }
 
         return Json(new { lugaresDisponibles });
@@ -163,6 +203,7 @@ public class TallerController : Controller
         if (!int.TryParse(HttpContext.Session.GetString("IdUsuario"), out int idUsuario))
         {
             HttpContext.Session.Clear();
+            TempData["ErrorSesion"] = "Tu sesión expiró. Iniciá sesión nuevamente.";
             return RedirectToAction("Login", "Cuenta");
         }
 

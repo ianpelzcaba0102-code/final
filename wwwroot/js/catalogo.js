@@ -14,12 +14,11 @@ if (botonVerMas) {
         try {
             const cantidadMostrada = contenedorTalleres.querySelectorAll(".taller-card").length;
             const respuesta = await fetch(`${urlVerMas}?cantidadMostrada=${cantidadMostrada}`);
+            const resultado = await respuesta.json();
 
             if (!respuesta.ok) {
-                throw new Error("No se pudieron cargar más talleres.");
+                throw new Error(resultado.mensaje || "No se pudieron cargar más talleres.");
             }
-
-            const resultado = await respuesta.json();
 
             for (const taller of resultado.talleres) {
                 const tarjeta = document.createElement("a");

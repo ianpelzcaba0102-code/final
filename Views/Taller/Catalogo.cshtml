@@ -6,6 +6,11 @@
 
 <h1>Catálogo</h1>
 
+@if (ViewBag.ErrorCatalogo is not null)
+{
+    <p class="text-danger" role="alert">@ViewBag.ErrorCatalogo</p>
+}
+
 @if (!Model.Any())
 {
     <p>No hay talleres disponibles en este momento.</p>

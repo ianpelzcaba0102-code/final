@@ -98,11 +98,27 @@ public static class BD
         using (SqlConnection connection = new SqlConnection(ConnectionString))
         {
             return connection.QueryFirstOrDefault<dynamic>(
-                "SELECT Id, IdTaller, Cupo, FechaHora " +
-                "FROM dbo.Encuentros " +
-                "WHERE Id = @pIdEncuentro",
+                "SELECT e.Id, e.IdTaller, e.Cupo, e.FechaHora, t.Activo " +
+                "FROM dbo.Encuentros AS e " +
+                "INNER JOIN dbo.Talleres AS t ON e.IdTaller = t.Id " +
+                "WHERE e.Id = @pIdEncuentro",
                 new { pIdEncuentro = idEncuentro }
             );
+        }
+    }
+
+    public static bool ExisteInscripcionActiva(int idUsuario, int idEncuentro)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            return connection.QuerySingle<int>(
+                "SELECT COUNT(*) " +
+                "FROM dbo.Inscripciones " +
+                "WHERE IdUsuario = @pIdUsuario " +
+                "AND IdEncuentro = @pIdEncuentro " +
+                "AND Cancelado = 0",
+                new { pIdUsuario = idUsuario, pIdEncuentro = idEncuentro }
+            ) > 0;
         }
     }
 

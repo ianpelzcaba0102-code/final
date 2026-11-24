@@ -10,12 +10,12 @@ for (const radio of radiosEncuentro) {
             const respuesta = await fetch(
                 `${urlLugaresDisponibles}?idEncuentro=${encodeURIComponent(radio.value)}`
             );
+            const datos = await respuesta.json();
 
             if (!respuesta.ok) {
-                throw new Error("No se pudieron consultar los lugares disponibles.");
+                throw new Error(datos.mensaje || "No se pudieron consultar los lugares disponibles.");
             }
 
-            const datos = await respuesta.json();
             resultadoLugares.innerHTML =
                 `Lugares disponibles: <strong>${datos.lugaresDisponibles}</strong>`;
         } catch (error) {
