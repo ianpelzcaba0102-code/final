@@ -45,8 +45,16 @@ public class TallerController : Controller
         return Json(new { talleres = talleresJson, hayMas });
     }
 
-    public IActionResult Detalle()
+    public IActionResult Detalle(int id)
     {
+        dynamic? taller = BD.ObtenerTaller(id);
+        if (taller is null)
+        {
+            return RedirectToAction(nameof(Catalogo));
+        }
+
+        ViewBag.Taller = taller;
+        ViewBag.Encuentros = BD.ObtenerEncuentrosFuturos((int)taller.Id);
         return View();
     }
 

@@ -47,6 +47,35 @@ public static class BD
         }
     }
 
+    public static dynamic? ObtenerTaller(int id)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            return connection.QueryFirstOrDefault<dynamic>(
+                "SELECT t.Id, t.Nombre, t.Descripcion, t.Imagen, t.IdCategoria, t.Activo, " +
+                "c.Nombre AS NombreCategoria " +
+                "FROM dbo.Talleres AS t " +
+                "INNER JOIN dbo.Categorias AS c ON t.IdCategoria = c.Id " +
+                "WHERE t.Id = @pId",
+                new { pId = id }
+            );
+        }
+    }
+
+    public static List<dynamic> ObtenerEncuentrosFuturos(int idTaller)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            return connection.Query(
+                "SELECT Id, IdTaller, FechaHora, DuracionMinutos, Cupo " +
+                "FROM dbo.Encuentros " +
+                "WHERE IdTaller = @pIdTaller AND FechaHora > GETDATE() " +
+                "ORDER BY FechaHora",
+                new { pIdTaller = idTaller }
+            ).ToList();
+        }
+    }
+
     public static List<dynamic> ObtenerInscripciones(int idUsuario)
     {
         using (SqlConnection connection = new SqlConnection(ConnectionString))

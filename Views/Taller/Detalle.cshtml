@@ -1,5 +1,37 @@
 @{
     ViewData["Title"] = "Detalle del taller";
+    dynamic taller = ViewBag.Taller;
+    IEnumerable<dynamic> encuentros = ViewBag.Encuentros;
 }
 
-<h1>Detalle del taller</h1>
+<h1>@taller.Nombre</h1>
+
+<section class="taller-detalle">
+    <img src="@Url.Content("~/imagenes/" + taller.Imagen)" alt="@taller.Nombre" />
+    <p><strong>ID:</strong> @taller.Id</p>
+    <p><strong>Descripción:</strong> @taller.Descripcion</p>
+    <p><strong>Imagen:</strong> @taller.Imagen</p>
+    <p><strong>ID de categoría:</strong> @taller.IdCategoria</p>
+    <p><strong>Categoría:</strong> @taller.NombreCategoria</p>
+    <p><strong>Activo:</strong> @taller.Activo</p>
+</section>
+
+<h2>Próximos encuentros</h2>
+
+@if (!encuentros.Any())
+{
+    <p>No hay encuentros futuros para este taller.</p>
+}
+else
+{
+    <ul>
+        @foreach (dynamic encuentro in encuentros)
+        {
+            <li>
+                @(((DateTime)encuentro.FechaHora).ToString("dd/MM/yyyy"))
+                a las @(((DateTime)encuentro.FechaHora).ToString("HH:mm")) —
+                @encuentro.DuracionMinutos minutos, cupo @encuentro.Cupo
+            </li>
+        }
+    </ul>
+}
