@@ -35,6 +35,18 @@ public static class BD
         }
     }
 
+    public static bool HayMasTalleres(int cantidadYaMostrada)
+    {
+        using (SqlConnection connection = new SqlConnection(ConnectionString))
+        {
+            int totalTalleresActivos = connection.QuerySingle<int>(
+                "SELECT COUNT(*) FROM dbo.Talleres WHERE Activo = 1"
+            );
+
+            return totalTalleresActivos > cantidadYaMostrada;
+        }
+    }
+
     public static List<dynamic> ObtenerInscripciones(int idUsuario)
     {
         using (SqlConnection connection = new SqlConnection(ConnectionString))

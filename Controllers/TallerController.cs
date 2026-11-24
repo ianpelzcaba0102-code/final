@@ -20,7 +20,29 @@ public class TallerController : Controller
     public IActionResult Catalogo()
     {
         List<dynamic> talleres = BD.ObtenerTalleres(0);
+        ViewBag.HayMas = BD.HayMasTalleres(talleres.Count);
         return View(talleres);
+    }
+
+    [HttpGet]
+    public IActionResult VerMas(int cantidadMostrada)
+    {
+        if (cantidadMostrada < 0)
+        {
+            return BadRequest();
+        }
+
+        List<dynamic> talleres = BD.ObtenerTalleres(cantidadMostrada);
+        var talleresJson = talleres.Select(taller => new
+        {
+            id = (int)taller.Id,
+            nombre = (string)taller.Nombre,
+            imagen = (string)taller.Imagen,
+            nombreCategoria = (string)taller.NombreCategoria
+        });
+        bool hayMas = BD.HayMasTalleres(cantidadMostrada + talleres.Count);
+
+        return Json(new { talleres = talleresJson, hayMas });
     }
 
     public IActionResult Detalle()
