@@ -1,27 +1,75 @@
-@model IEnumerable<dynamic>
-
 @{
     ViewData["Title"] = "Mis inscripciones";
+    IEnumerable<dynamic> proximas = ViewBag.Proximas;
+    IEnumerable<dynamic> pasadas = ViewBag.Pasadas;
 }
 
 <h1>Mis inscripciones</h1>
 
-@if (!Model.Any())
-{
-    <p>No tenés inscripciones.</p>
-}
-else
-{
-    <ul>
-        @foreach (dynamic inscripcion in Model)
+<h2>Próximas</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Taller</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Duración</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!proximas.Any())
         {
-            <li>
-                @inscripcion.NombreTaller
-                @if (inscripcion.Cancelado)
-                {
-                    <span>(Cancelada)</span>
-                }
-            </li>
+            <tr><td colspan="5">No tenés inscripciones próximas.</td></tr>
         }
-    </ul>
-}
+        else
+        {
+            @foreach (dynamic inscripcion in proximas)
+            {
+                <tr>
+                    <td>@inscripcion.NombreTaller</td>
+                    <td>@(((DateTime)inscripcion.FechaHora).ToString("dd/MM/yyyy"))</td>
+                    <td>@(((DateTime)inscripcion.FechaHora).ToString("HH:mm"))</td>
+                    <td>@inscripcion.DuracionMinutos minutos</td>
+                    <td>
+                        <button type="button" data-id-inscripcion="@inscripcion.IdInscripcion">
+                            Cancelar
+                        </button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<h2>Pasadas</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Taller</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Duración</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!pasadas.Any())
+        {
+            <tr><td colspan="5">No tenés inscripciones pasadas.</td></tr>
+        }
+        else
+        {
+            @foreach (dynamic inscripcion in pasadas)
+            {
+                <tr>
+                    <td>@inscripcion.NombreTaller</td>
+                    <td>@(((DateTime)inscripcion.FechaHora).ToString("dd/MM/yyyy"))</td>
+                    <td>@(((DateTime)inscripcion.FechaHora).ToString("HH:mm"))</td>
+                    <td>@inscripcion.DuracionMinutos minutos</td>
+                    <td>@((bool)inscripcion.Cancelado ? "Cancelada" : "Finalizada")</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

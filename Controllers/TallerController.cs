@@ -123,6 +123,20 @@ public class TallerController : Controller
             return RedirectToAction("Login", "Cuenta");
         }
 
-        return View(BD.ObtenerInscripciones(idUsuario));
+        List<dynamic> inscripciones = BD.ObtenerInscripcionesUsuario(idUsuario);
+        DateTime ahora = DateTime.Now;
+
+        ViewBag.Proximas = inscripciones
+            .Where(inscripcion =>
+                (DateTime)inscripcion.FechaHora > ahora &&
+                !(bool)inscripcion.Cancelado)
+            .ToList();
+        ViewBag.Pasadas = inscripciones
+            .Where(inscripcion =>
+                (DateTime)inscripcion.FechaHora <= ahora ||
+                (bool)inscripcion.Cancelado)
+            .ToList();
+
+        return View();
     }
 }

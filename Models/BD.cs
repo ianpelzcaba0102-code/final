@@ -183,19 +183,18 @@ public static class BD
         }
     }
 
-    public static List<dynamic> ObtenerInscripciones(int idUsuario)
+    public static List<dynamic> ObtenerInscripcionesUsuario(int idUsuario)
     {
         using (SqlConnection connection = new SqlConnection(ConnectionString))
         {
             return connection.Query(
-                "SELECT i.Id, i.IdEncuentro, e.IdTaller, i.IdUsuario, " +
-                "i.FechaInscripcion, i.Cancelado, i.FechaCancelacion, " +
-                "t.Nombre AS NombreTaller " +
+                "SELECT i.Id AS IdInscripcion, t.Nombre AS NombreTaller, " +
+                "e.FechaHora, e.DuracionMinutos, i.Cancelado " +
                 "FROM dbo.Inscripciones AS i " +
                 "INNER JOIN dbo.Encuentros AS e ON i.IdEncuentro = e.Id " +
                 "INNER JOIN dbo.Talleres AS t ON e.IdTaller = t.Id " +
                 "WHERE i.IdUsuario = @pIdUsuario " +
-                "ORDER BY i.FechaInscripcion DESC",
+                "ORDER BY e.FechaHora DESC",
                 new { pIdUsuario = idUsuario }
             ).ToList();
         }
