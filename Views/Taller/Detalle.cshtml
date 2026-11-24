@@ -34,10 +34,10 @@
 else
 {
     <form asp-controller="Taller" asp-action="Inscribirse" method="post">
-    <ul>
+    <ul class="encuentros-lista">
         @foreach (dynamic encuentro in encuentros)
         {
-            <li>
+            <li class="encuentro-card">
                 <label>
                     <input type="radio"
                            name="IdEncuentro"
