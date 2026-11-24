@@ -7,8 +7,8 @@ body {
     flex-direction: column;
     min-height: 100vh;
     margin: 0;
-    color: #243247;
-    background-color: #f5f7fa;
+    color: #0066ff;
+    background-color: #094b04;
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.5;
 }
@@ -16,7 +16,7 @@ body {
 .site-header {
     padding: 1.25rem 1.5rem;
     color: #fff;
-    background-color: #23466b;
+    background-color: #0066ff;
 }
 
 .site-header-content {
@@ -85,7 +85,7 @@ form {
 }
 
 .form-control:focus {
-    border-color: #23466b;
+    border-color: #0066ff;
     outline: 2px solid #b8d2eb;
 }
 
